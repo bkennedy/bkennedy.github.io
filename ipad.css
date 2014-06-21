@@ -1,0 +1,49 @@
+@charset "utf-8";
+/* CSS Document */
+html,body{-webkit-text-size-adjust:none;}
+body{ width:100%; height:1151px; background:#000 url(images/bg.jpg) repeat-x 0 60px; margin:0; padding:0; font-family:Arial;}
+
+#warp{ width:960px; height:1151px; margin:0 auto; padding:0;}
+.logo{width:130px; height:120px; position:absolute; z-index:100; margin:0 415px; padding:0;}
+.button-download{ width:220px; height:65px; position:absolute; z-index:100; margin:580px 0 0 70px;}
+.button-download a{ display:block; width:220px; height:65px; overflow:hidden; text-indent:-999px; }
+
+.button-learn{ width:120px; height:65px; position:absolute; z-index:200; margin:580px 0 0 290px;}
+.button-learn a{ display:block; width:120px; height:65px; overflow:hidden; text-indent:-999px; }
+
+.head{ height:60px; width:960px;}
+.head ul{ height:14px; padding:23px 0 0 204px; list-style: none; margin:0; float:left; color:#CCC;}
+.head ul li{ height:14px; margin:0; padding:0 65px 0 0; float:left;}
+
+.head .home{height:14px; width:38px; display:block; background:url(images/home.png) no-repeat; }
+.head .home:hover {background:url(images/home-hover.png) no-repeat;}
+.head .home-hover {height:14px; width:38px; display:block; background:url(images/home-hover.png) no-repeat;}
+
+.head .about{height:14px; width:47px; display:block; background:url(images/about.png) no-repeat; }
+.head .about:hover {background:url(images/about-hover.png) no-repeat;}
+.head .about-hover {height:14px; width:38px; display:block; background:url(images/about-hover.png) no-repeat;}
+
+.head .service{height:14px; width:65px; display:block; background:url(images/support.png) no-repeat; }
+.head .service:hover {background:url(images/support-hover.png) no-repeat;}
+.head .service-hover {height:14px; width:38px; display:block; background:url(images/service-hover.png) no-repeat;}
+
+.head .contact{height:14px; width:63px; display:block; background:url(images/contact.png) no-repeat; }
+.head .contact:hover {background:url(images/contact-hover.png) no-repeat;}
+.head .contact-hover {height:14px; width:38px; display:block; background:url(images/contact-hover.png) no-repeat;}
+
+.banner{ height:650px; width:960px; background:url(images/ipad.png) no-repeat 42px 80px;}
+
+.content{ padding:44px 0 42px 0;}
+.content1{ padding:0 52px 0 40px; background:url(images/line.png) no-repeat right top; float:left; width:260px;}
+.content h1{ padding:0; margin:0;}
+.content p{ font-size:13px; line-height:20px; color:#515151; margin:0; padding:5px 0 10px 0;}
+.content2{ padding:0 0 0 40px; float:left; width:210px;}
+.content span{ display:block; float:left; height:33px; width:33px; margin:0; padding:20px 10px 0 0;}
+
+.clr{ clear:both;}
+
+.top{ width:29px; height:29px; position:absolute; z-index:100; margin:10px 0 0 850px;}
+.top a{ display:block; width:29px; height:29px; overflow:hidden; text-indent:-999px; }
+
+.footer{ height:65px; width:960px; background:url(images/arrow.png) no-repeat 850px 10px ; padding:20px 0 0 0; margin:0; text-align:center; font-size:12px; color:#4d4d4d;}
+
