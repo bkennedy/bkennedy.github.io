@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html style="scrollbar-gutter: stable both-edges;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="./bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <title>PlayStation Access Controller Profile Editor</title>
+    <script src="./bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+    <script src="./crc.js"></script>
+    <script src="./code.js" defer></script>
+    <style>
+        .profile-slot {
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .profile-slot:hover {
+            background-color: #f8f9fa;
+        }
+        .profile-slot.filled {
+            border-color: #0d6efd;
+            background-color: #f0f7ff;
+        }
+        .profile-slot .slot-label {
+            font-weight: bold;
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+        .profile-slot .profile-name {
+            font-size: 1.1rem;
+            margin-top: 5px;
+        }
+        .profile-list-item {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        .profile-list-item .profile-info {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .profile-list-item .profile-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .slot-checkbox-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .slot-checkbox-group label {
+            margin: 0;
+        }
+        .btn-add-profile {
+            width: 36px;
+            height: 36px;
+            font-size: 20px;
+            border-radius: 50%;
+            padding: 0;
+            line-height: 1;
+        }
+        #profile-editor {
+            display: none;
+        }
+        #profile-editor.active {
+            display: block;
+        }
+        #profile-viewer {
+            display: none;
+        }
+        #profile-viewer.active {
+            display: block;
+        }
+        #main-view.hidden {
+            display: none;
+        }
+        .viewer-row {
+            display: flex;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .viewer-label {
+            width: 150px;
+            font-weight: bold;
+            color: #666;
+        }
+        .viewer-value {
+            flex: 1;
+        }
+        #profile-editor .row {
+            align-items: center;
+        }
+        #profile-editor .col-3 {
+            min-width: 100px;
+            flex: 0 0 100px;
+        }
+        #profile-editor select.form-select {
+            min-width: auto;
+            width: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container d-flex flex-column" style="max-width: 800px;">
+
+        <div class="mb-2 mt-2" id="back-button-container" style="display: none;">
+            <button id="back_to_list" type="button" class="btn btn-secondary btn-sm">← Back</button>
+        </div>
+
+        <h1 class="mt-sm-5 mt-3">PlayStation Access Controller Profile Editor</h1>
+
+        <!-- Controller Connection Buttons -->
+        <div class="row my-4" id="controller-buttons">
+            <div class="col">
+                <button id="open_device" type="button" class="btn btn-primary w-100">Connect to controller</button>
+            </div>
+            <div class="col">
+                <button id="load_from_device" type="button" class="btn btn-primary w-100" disabled="">Load from controller</button>
+            </div>
+            <div class="col">
+                <button id="save_to_device" type="button" class="btn btn-primary w-100" disabled="">Save to controller</button>
+            </div>
+        </div>
+
+        <div id="error" class="alert alert-danger d-none"></div>
+        <div id="success" class="alert alert-success d-none"></div>
+
+        <!-- Main View -->
+        <div id="main-view">
+            <!-- Profile Slots -->
+            <div class="row mb-4">
+                <div class="col-4">
+                    <div class="profile-slot" id="slot-1" onclick="viewSlotProfile(1)">
+                        <div class="slot-label">Profile Slot 1</div>
+                        <div class="profile-name text-muted">Empty</div>
+                    </div>
+                    <button class="btn btn-sm btn-outline-secondary w-100 mt-1 slot-edit-btn" id="slot-1-edit-btn" onclick="editSlotProfile(1); event.stopPropagation();" style="display: none;">Edit</button>
+                </div>
+                <div class="col-4">
+                    <div class="profile-slot" id="slot-2" onclick="viewSlotProfile(2)">
+                        <div class="slot-label">Profile Slot 2</div>
+                        <div class="profile-name text-muted">Empty</div>
+                    </div>
+                    <button class="btn btn-sm btn-outline-secondary w-100 mt-1 slot-edit-btn" id="slot-2-edit-btn" onclick="editSlotProfile(2); event.stopPropagation();" style="display: none;">Edit</button>
+                </div>
+                <div class="col-4">
+                    <div class="profile-slot" id="slot-3" onclick="viewSlotProfile(3)">
+                        <div class="slot-label">Profile Slot 3</div>
+                        <div class="profile-name text-muted">Empty</div>
+                    </div>
+                    <button class="btn btn-sm btn-outline-secondary w-100 mt-1 slot-edit-btn" id="slot-3-edit-btn" onclick="editSlotProfile(3); event.stopPropagation();" style="display: none;">Edit</button>
+                </div>
+            </div>
+
+            <!-- Profile Library Header with buttons -->
+            <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+                <div class="d-flex align-items-center">
+                    <h4 class="mb-0 me-3">Profile Library</h4>
+                    <button id="add_profile_btn" type="button" class="btn btn-primary btn-add-profile">+</button>
+                </div>
+                <div class="d-flex gap-2">
+                    <button id="import_profiles" type="button" class="btn btn-warning">Load Library</button>
+                    <input type="file" id="import_file_input" accept=".json" style="display: none;">
+                    <button id="export_profiles" type="button" class="btn btn-success">Save Library</button>
+                </div>
+            </div>
+            <div id="profile-list">
+                <p class="text-muted" id="empty-library-message">No profiles in library. Click + to create one or load from file.</p>
+            </div>
+        </div>
+
+        <!-- Profile Viewer (read-only, hidden by default) -->
+        <div id="profile-viewer">
+            <div class="mb-3">
+                <h4 id="viewer-title">Profile Details</h4>
+            </div>
+            <div id="viewer-content"></div>
+        </div>
+
+        <!-- Profile Editor (hidden by default) -->
+        <div id="profile-editor">
+            <div class="mb-3">
+                <h4 id="editor-title" class="mb-0">New Profile</h4>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-3 text-end">
+                    <label class="col-form-label">Profile Name</label>
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" id="editor_name_input" value="New Profile" maxlength="40">
+                    <div class="invalid-feedback" id="editor_name_error">A profile with this name already exists.</div>
+                </div>
+                <div class="col-auto">
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" id="show_switch_mapping">
+                        <label class="form-check-label" for="show_switch_mapping">Show Switch Pro mapping</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-3 text-end">
+                    <label class="col-form-label">Orientation</label>
+                </div>
+                <div class="col-auto">
+                    <select class="form-select" id="editor_orientation_dropdown">
+                        <option value="3">stick on the left</option>
+                        <option value="2">stick above</option>
+                        <option value="1">stick on the right</option>
+                        <option value="0">stick below</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-3 text-end">
+                    <label class="col-form-label">Stick</label>
+                </div>
+                <div class="col-auto">
+                    <select class="form-select" id="editor_e0_mapping1_dropdown">
+                        <option value="0">nothing</option>
+                        <option value="101">left stick</option>
+                        <option value="102">right stick</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-3 text-end">
+                    <label class="col-form-label">Stick press in</label>
+                </div>
+                <div class="col-auto">
+                    <select class="form-select" id="editor_b10_mapping1_dropdown">
+                        <option value="0">nothing</option>
+                        <option value="1">circle</option>
+                        <option value="2">cross</option>
+                        <option value="3">triangle</option>
+                        <option value="4">square</option>
+                        <option value="5">up</option>
+                        <option value="6">down</option>
+                        <option value="7">left</option>
+                        <option value="8">right</option>
+                        <option value="9">L1</option>
+                        <option value="10">R1</option>
+                        <option value="11">L2</option>
+                        <option value="12">R2</option>
+                        <option value="13">L3</option>
+                        <option value="14">R3</option>
+                        <option value="15">options</option>
+                        <option value="16">create</option>
+                        <option value="17">PS</option>
+                        <option value="18">touchpad</option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <label class="col-form-label">+</label>
+                </div>
+                <div class="col-auto">
+                    <select class="form-select" id="editor_b10_mapping2_dropdown">
+                        <option value="0">nothing</option>
+                        <option value="1">circle</option>
+                        <option value="2">cross</option>
+                        <option value="3">triangle</option>
+                        <option value="4">square</option>
+                        <option value="5">up</option>
+                        <option value="6">down</option>
+                        <option value="7">left</option>
+                        <option value="8">right</option>
+                        <option value="9">L1</option>
+                        <option value="10">R1</option>
+                        <option value="11">L2</option>
+                        <option value="12">R2</option>
+                        <option value="13">L3</option>
+                        <option value="14">R3</option>
+                        <option value="15">options</option>
+                        <option value="16">create</option>
+                        <option value="17">PS</option>
+                        <option value="18">touchpad</option>
+                    </select>
+                </div>
+                <div class="col-auto col-form-label">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="editor_b10_toggle_checkbox">
+                        <label class="form-check-label" for="editor_b10_toggle_checkbox">toggle</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons 1-9 will be generated similar pattern -->
+            <div id="editor-buttons-container"></div>
+
+            <!-- Expansion Ports 1-4 will be generated -->
+            <div id="editor-expansion-container"></div>
+
+            <div class="row mt-4 mb-3">
+                <div class="col">
+                    <button id="save_profile_to_library" type="button" class="btn btn-primary w-100">Add Profile to Library</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="height: 100px"></div>
+    </div>
+
+    <!-- Unsaved Changes Modal -->
+    <div class="modal fade" id="unsavedChangesModal" tabindex="-1" aria-labelledby="unsavedChangesModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="unsavedChangesModalLabel">Unsaved Changes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    You have unsaved changes. If you go back now, all changes will be lost.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="discardChangesBtn">Discard Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body></html>
